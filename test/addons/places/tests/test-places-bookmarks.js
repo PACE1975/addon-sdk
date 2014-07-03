@@ -18,6 +18,8 @@ const { newURI } = require('sdk/url/utils');
 const { defer, all } = require('sdk/core/promise');
 const { defer: async } = require('sdk/lang/functional');
 const { before, after } = require('sdk/test/utils');
+const { stringify } = require('sdk/util/json');
+const tabs = require("sdk/tabs");
 
 const {
   Bookmark, Group, Separator,
@@ -940,12 +942,41 @@ exports.testCheckSaveOrder = function (assert, done) {
     Bookmark({ url: 'http://url5.com', title: 'url5', group: group })
   ];
   saveP(bookmarks).then(results => {
-    for (let i = 0; i < bookmarks.length; i++)
-      assert.equal(results[i].url, bookmarks[i].url,
+    bookmarks.forEach((bookmark, i) => {
+      assert.equal(results[i].url, bookmark.url,
         'correct ordering of bookmark results');
-    done();
-  });
+    });
+  }).then(done, assert.fail);
 };
+
+/*
+exports.testBookmarkTab = function(assert, done) {
+  let url = 'data:text/html;charset=utf-8,' + encodeURIComponent('<html><head><title>test</title></head></html>');
+  let expected = stringify({
+    url: url,
+    title: "test"
+  });
+
+  tabs.open({
+    url: url,
+    inBackground: true,
+    onReady: tab => {
+      assert.equal(stringify(tab), expected, 'stringify(Tab) works');
+
+      let bm = Bookmark(tab);
+      assert.equal(stringify(bm), expected, 'stringify(Bookmark) works');
+
+      save(bm).once('end', (saved) => {
+        assert.pass('Bookmark(Tab) works');
+
+        save(remove(saved)).on("end", (results) => {
+          assert.pass('bookmark removed');
+          tab.close(done);
+        });
+      })
+    }
+  });
+}*/
 
 before(exports, (name, assert, done) => resetPlaces(done));
 after(exports, (name, assert, done) => resetPlaces(done));
