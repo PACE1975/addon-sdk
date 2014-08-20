@@ -73,19 +73,28 @@ exports.testChromeInPanel = function(assert, done) {
     contentScriptWhen: 'start',
     contentScriptFile: data.url('panel.js')
   });
+
   panel.once('show', _ => {
     assert.pass('panel shown');
+
     panel.port.once('echo', _ => {
       assert.pass('got echo');
+
       panel.once('hide', _ => {
         panel.destroy();
         assert.pass('panel is destroyed');
         done();
       });
+
+      assert.pass('hiding');
       panel.hide();
     });
+
+    assert.pass('send echo');
     panel.port.emit('echo');
   });
+
+  assert.pass('showing');
   panel.show();
 }
 
