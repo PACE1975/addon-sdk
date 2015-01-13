@@ -1,6 +1,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 'use strict';
 
 let {
@@ -8,9 +9,8 @@ let {
 } = require('toolkit/loader');
 let { readURI } = require('sdk/net/url');
 
-let root = module.uri.substr(0, module.uri.lastIndexOf('/'));
+let root = module.uri.substr(0, module.uri.lastIndexOf('/'))
 
-const app = require('sdk/system/xul-app');
 
 // The following adds Debugger constructor to the global namespace.
 const { Cu } = require('chrome');
@@ -374,67 +374,5 @@ exports["test require#resolve"] = function(assert) {
   assert.equal(foundRoot + "toolkit/loader.js", require.resolve("toolkit/loader"), "correct resolution of sdk module");
 };
 
-
-exports['test loader on unsupported modules with checkCompatibility true'] = function(assert) {
-  let loader = Loader({
-    paths: { '': root + "/" },
-    checkCompatibility: true
-  });
-  let require = Require(loader, module);
-
-  assert.throws(() => {
-    if (!app.is('Firefox')) {
-      require('fixtures/loader/unsupported/firefox');
-    }
-    else {
-      require('fixtures/loader/unsupported/fennec');
-    }
-  }, /^Unsupported Application/, "throws Unsupported Application");
-
-  unload(loader);
-};
-
-exports['test loader on unsupported modules with checkCompatibility false'] = function(assert) {
-  let loader = Loader({
-    paths: { '': root + "/" },
-    checkCompatibility: false
-  });
-  let require = Require(loader, module);
-
-  try {
-    if (!app.is('Firefox')) {
-      require('fixtures/loader/unsupported/firefox');
-    }
-    else {
-      require('fixtures/loader/unsupported/fennec');
-    }
-    assert.pass("loaded unsupported module without an error");
-  }
-  catch(e) {
-    assert.fail(e);
-  }
-
-  unload(loader);
-};
-
-exports['test loader on unsupported modules with checkCompatibility default'] = function(assert) {
-  let loader = Loader({ paths: { '': root + "/" } });
-  let require = Require(loader, module);
-
-  try {
-    if (!app.is('Firefox')) {
-      require('fixtures/loader/unsupported/firefox');
-    }
-    else {
-      require('fixtures/loader/unsupported/fennec');
-    }
-    assert.pass("loaded unsupported module without an error");
-  }
-  catch(e) {
-    assert.fail(e);
-  }
-
-  unload(loader);
-};
 
 require('sdk/test').run(exports);
