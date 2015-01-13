@@ -4,6 +4,7 @@
 'use strict';
 
 const app = require('sdk/system/xul-app');
+const packaging = require('@loader/options');
 
 /*
  * Include a module that is unsupported for the current system.
@@ -20,5 +21,11 @@ else {
 exports.testRunning = function (assert) {
   assert.fail('Tests should not run in unsupported applications');
 };
+
+if (packaging.isNative) {
+  module.exports = {
+    "test skip on jpm": (assert) => assert.pass("skipping this file with jpm")
+  };
+}
 
 require('sdk/test').run(exports);

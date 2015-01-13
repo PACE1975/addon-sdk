@@ -6,7 +6,6 @@
 const { Cc, Ci, Cu, CC, Cr, Cm, ChromeWorker, components } = require("chrome");
 
 const packaging = require("@loader/options");
-const app = require('sdk/system/xul-app');
 const { resolve } = require;
 
 const scriptLoader = Cc['@mozilla.org/moz/jssubscript-loader;1'].
