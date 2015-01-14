@@ -4,8 +4,7 @@
 'use strict';
 
 let {
-  Loader, main, unload, parseStack, generateMap, resolve, join,
-  Require, Module
+  Loader, main, unload, parseStack, generateMap, resolve, join
 } = require('toolkit/loader');
 let { readURI } = require('sdk/net/url');
 
@@ -375,24 +374,6 @@ exports["test require#resolve"] = function(assert) {
   assert.equal(foundRoot + "toolkit/loader.js", require.resolve("toolkit/loader"), "correct resolution of sdk module");
 };
 
-const modulesURI = require.resolve("toolkit/loader").replace("toolkit/loader.js", "");
-exports["test loading a loader"] = function(assert) {
-  const loader = Loader({ paths: { "": modulesURI } });
-
-  const require = Require(loader, module);
-
-  const requiredLoader = require("toolkit/loader");
-
-  assert.equal(requiredLoader.Loader, Loader,
-               "got the same Loader instance");
-
-  const jsmLoader = Cu.import(require.resolve("toolkit/loader"), {}).Loader;
-
-  assert.equal(jsmLoader.Loader, requiredLoader.Loader,
-               "loading loader via jsm returns same loader");
-
-  unload(loader);
-};
 
 exports['test loader on unsupported modules with checkCompatibility true'] = function(assert) {
   let loader = Loader({
